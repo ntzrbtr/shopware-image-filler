@@ -1,0 +1,26 @@
+{
+    "name": "ntzrbtr/shopware-image-filler",
+    "description": "Fill missing images in Shopware 6",
+    "type": "symfony-bundle",
+    "require": {
+        "php": "^7.4.3 || ^8.1 || ^8.2",
+        "shopware/core": "^6.4 || ^6.5"
+    },
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "Netzarbeiter\\Shopware\\ImageFiller\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Thomas Off",
+            "email": "thomas.off@netzarbeiter.info"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "symfony/runtime": true
+        }
+    }
+}
