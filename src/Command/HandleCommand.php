@@ -215,8 +215,15 @@ class HandleCommand extends \Symfony\Component\Console\Command\Command
     protected function checkImage(MediaEntity $image, bool $dryRun = false): bool
     {
         // Try to load the file.
-        $data = $this->fileLoader->loadMediaFile($image->getId(), $this->context);
-        if (!empty($data)) {
+        try {
+            $data = $this->fileLoader->loadMediaFile($image->getId(), $this->context);
+            if (strlen($data) !== $image->getFileSize()) {
+                $data = null;
+            }
+        } catch (\Exception $e) {
+            $data = null;
+        }
+        if ($data !== null) {
             return false;
         }
 
@@ -228,7 +235,7 @@ class HandleCommand extends \Symfony\Component\Console\Command\Command
 
         // Get and check dimensions.
         $dimensions = $this->getDimensions($image);
-        if (empty($dimensions)) {
+        if ($dimensions === null) {
             $this->io->warning(sprintf('Image "%s" has no dimensions', $image->getFileName()));
             return false;
         }
@@ -242,9 +249,12 @@ class HandleCommand extends \Symfony\Component\Console\Command\Command
         );
         $request = new \Symfony\Component\HttpFoundation\Request();
         $request->request->set('url', $url);
-        $data = $this->fileFetcher->fetchFileFromURL($request, $image->getFileName());
-        if (empty($data)) {
-            $this->io->warning(sprintf('Image "%s" could not be fetched from url "%s"', $image->getFileName(), $url));
+        $request->query->set('extension', $this->getExtension($image));
+        try {
+            $data = $this->fileFetcher->fetchFileFromURL($request, $image->getFileName() . '.' . $this->getExtension($image));
+        } catch (\Exception $e) {
+            \Symfony\Component\VarDumper\VarDumper::dump($e);
+            $this->io->warning(sprintf('Image "%s" could not be fetched from url "%s": %s', $image->getFileName(), $url, $e->getMessage()));
             return false;
         }
 
@@ -278,7 +288,7 @@ class HandleCommand extends \Symfony\Component\Console\Command\Command
             return null;
         }
 
-        return [$width, $height];
+        return compact('width', 'height');
     }
 
     /**
