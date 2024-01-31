@@ -50,6 +50,41 @@ class HandleCommand extends \Symfony\Component\Console\Command\Command
     protected SymfonyStyle $io;
 
     /**
+     * Database connection
+     *
+     * @var Connection
+     */
+    protected Connection $connection;
+
+    /**
+     * Media repository
+     *
+     * @var EntityRepository
+     */
+    protected EntityRepository $mediaRepository;
+
+    /**
+     * File loader
+     *
+     * @var FileLoader
+     */
+    protected FileLoader $fileLoader;
+
+    /**
+     * File fetcher
+     *
+     * @var FileFetcher
+     */
+    protected FileFetcher $fileFetcher;
+
+    /**
+     * File saver
+     *
+     * @var FileSaver
+     */
+    protected FileSaver $fileSaver;
+
+    /**
      * HandleCommand constructor.
      *
      * @param Connection $connection
@@ -59,13 +94,19 @@ class HandleCommand extends \Symfony\Component\Console\Command\Command
      * @param FileSaver $fileSaver
      */
     public function __construct(
-        protected Connection $connection,
-        protected EntityRepository $mediaRepository,
-        protected FileLoader $fileLoader,
-        protected FileFetcher $fileFetcher,
-        protected FileSaver $fileSaver
+        Connection $connection,
+        EntityRepository $mediaRepository,
+        FileLoader $fileLoader,
+        FileFetcher $fileFetcher,
+        FileSaver $fileSaver
     ) {
         parent::__construct();
+
+        $this->fileSaver = $fileSaver;
+        $this->fileFetcher = $fileFetcher;
+        $this->fileLoader = $fileLoader;
+        $this->mediaRepository = $mediaRepository;
+        $this->connection = $connection;
 
         // Create context.
         $this->context = Context::createDefaultContext();
