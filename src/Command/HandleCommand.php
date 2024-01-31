@@ -258,6 +258,7 @@ class HandleCommand extends \Symfony\Component\Console\Command\Command
         }
 
         // Save download image.
+        // @todo Fix update that causes images to be placed in the root folder
         $this->fileSaver->persistFileToMedia(
             $data,
             $image->getFileName(),
