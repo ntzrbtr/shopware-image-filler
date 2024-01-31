@@ -253,7 +253,6 @@ class HandleCommand extends \Symfony\Component\Console\Command\Command
         try {
             $data = $this->fileFetcher->fetchFileFromURL($request, $image->getFileName() . '.' . $this->getExtension($image));
         } catch (\Exception $e) {
-            \Symfony\Component\VarDumper\VarDumper::dump($e);
             $this->io->warning(sprintf('Image "%s" could not be fetched from url "%s": %s', $image->getFileName(), $url, $e->getMessage()));
             return false;
         }
